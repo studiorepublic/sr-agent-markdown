@@ -1,0 +1,27 @@
+.sr-agent-markdown-settings .form-table th {
+	width: 280px;
+}
+
+.sr-agent-markdown-settings h2 {
+	margin-top: 2em;
+	padding-top: 0.5em;
+	border-top: 1px solid #dcdcde;
+}
+
+.sr-agent-markdown-settings .description {
+	max-width: 720px;
+}
+
+.sr-agent-markdown-settings .button-delete {
+	margin-top: 0.5em;
+}
+
+.sr-agent-markdown-settings .post-type-checkboxes label {
+	display: block;
+	margin-bottom: 6px;
+}
+
+.sr-agent-markdown-settings .post-type-checkboxes code {
+	margin-left: 4px;
+	color: #646970;
+}
