@@ -123,6 +123,37 @@ composer install
 vendor/bin/phpunit
 ```
 
+## GitHub releases and updates
+
+The plugin checks [studiorepublic/sr-agent-markdown](https://github.com/studiorepublic/sr-agent-markdown) for new releases using [plugin-update-checker](https://github.com/YahnisElsts/plugin-update-checker). Updates appear in **Dashboard → Plugins** like any other plugin update.
+
+Override the repository URL:
+
+```php
+add_filter( 'sr_agent_markdown_update_repo_url', function () {
+    return 'https://github.com/your-org/sr-agent-markdown';
+} );
+```
+
+### Build a release zip locally
+
+```bash
+cd wp-content/plugins/sr-agent-markdown
+./scripts/build-release.sh
+```
+
+This creates `dist/sr-agent-markdown.zip` with production `vendor/` included. Attach that zip to a GitHub release — the update checker downloads release assets matching `\.zip$`, not GitHub’s auto-generated source archive.
+
+### Publish a release
+
+From a clean working tree on `main`:
+
+```bash
+./scripts/release.sh 1.0.1
+```
+
+This bumps the version in `sr-agent-markdown.php` and `readme.txt`, commits, tags `v1.0.1`, and pushes. The [Release workflow](.github/workflows/release.yml) then builds the zip and attaches it to the GitHub release.
+
 ## Limitations
 
 - Archive, search, and 404 Markdown are disabled by default.

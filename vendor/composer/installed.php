@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
-        'name' => 'sr-website/sr-agent-markdown',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'name' => 'studiorepublic/sr-agent-markdown',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '26ff1bbe5657fec128a69d6ea7bc4e0f54923d8f',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -244,10 +244,10 @@
             'aliases' => array(),
             'dev_requirement' => true,
         ),
-        'sr-website/sr-agent-markdown' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+        'studiorepublic/sr-agent-markdown' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '26ff1bbe5657fec128a69d6ea7bc4e0f54923d8f',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -261,6 +261,15 @@
             'install_path' => __DIR__ . '/../theseer/tokenizer',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'yahnis-elsts/plugin-update-checker' => array(
+            'pretty_version' => 'v5.7',
+            'version' => '5.7.0.0',
+            'reference' => '275a96a2a18d03c34c87f35cb68673c8c49ac3b1',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../yahnis-elsts/plugin-update-checker',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
     ),
 );

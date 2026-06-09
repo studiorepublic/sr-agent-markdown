@@ -45,6 +45,21 @@ if ( ! file_exists( $sr_agent_markdown_autoload ) ) {
 
 require_once $sr_agent_markdown_autoload;
 
+if ( class_exists( 'YahnisElsts\PluginUpdateChecker\v5\PucFactory' ) ) {
+	$sr_agent_markdown_repo_url = apply_filters(
+		'sr_agent_markdown_update_repo_url',
+		'https://github.com/studiorepublic/sr-agent-markdown'
+	);
+
+	$sr_agent_markdown_update_checker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+		$sr_agent_markdown_repo_url,
+		__FILE__,
+		'sr-agent-markdown'
+	);
+
+	$sr_agent_markdown_update_checker->getVcsApi()->enableReleaseAssets( '/\.zip$/' );
+}
+
 register_activation_hook(
 	__FILE__,
 	static function (): void {
