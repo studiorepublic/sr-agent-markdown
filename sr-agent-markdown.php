@@ -3,7 +3,7 @@
  * Plugin Name: SR Agent Markdown
  * Plugin URI: https://github.com/studiorepublic/sr-agent-markdown
  * Description: Serves Markdown representations of public pages for AI agents via Accept header, .md URLs, or query parameters.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Author: SR Website
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SR_AGENT_MARKDOWN_VERSION', '1.0.0' );
+define( 'SR_AGENT_MARKDOWN_VERSION', '1.0.1' );
 define( 'SR_AGENT_MARKDOWN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SR_AGENT_MARKDOWN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SR_AGENT_MARKDOWN_BASENAME', plugin_basename( __FILE__ ) );
