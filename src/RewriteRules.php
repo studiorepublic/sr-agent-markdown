@@ -8,6 +8,10 @@ final class RewriteRules
 {
 	public const QUERY_VAR = 'sr_md_path';
 
+	private const REWRITE_RULES_VERSION = '1.0.1';
+
+	private const REWRITE_VERSION_OPTION = 'sr_agent_markdown_rewrite_rules_version';
+
 	/**
 	 * @var array<string, mixed>
 	 */
@@ -35,10 +39,16 @@ final class RewriteRules
 		}
 
 		self::register_rewrite_rules();
+
+		if ( get_option( self::REWRITE_VERSION_OPTION ) !== self::REWRITE_RULES_VERSION ) {
+			flush_rewrite_rules( false );
+			update_option( self::REWRITE_VERSION_OPTION, self::REWRITE_RULES_VERSION );
+		}
 	}
 
 	public static function register_rewrite_rules(): void
 	{
+		add_rewrite_rule( '^\.md/?$', 'index.php?' . self::QUERY_VAR . '=', 'top' );
 		add_rewrite_rule( '(.+?)\.md/?$', 'index.php?' . self::QUERY_VAR . '=$matches[1]', 'top' );
 	}
 
@@ -61,17 +71,18 @@ final class RewriteRules
 
 	public function normalize_md_request( \WP $wp ): void
 	{
-		if ( empty( $wp->query_vars[ self::QUERY_VAR ] ) ) {
+		if ( ! array_key_exists( self::QUERY_VAR, $wp->query_vars ) ) {
 			return;
 		}
 
 		$path = trim( (string) $wp->query_vars[ self::QUERY_VAR ], '/' );
 
+		unset( $wp->query_vars[ self::QUERY_VAR ] );
+
 		if ( '' === $path ) {
+			$this->resolve_front_page_query( $wp );
 			return;
 		}
-
-		unset( $wp->query_vars[ self::QUERY_VAR ] );
 
 		$segments = explode( '/', $path );
 		$last     = array_pop( $segments );
@@ -99,5 +110,21 @@ final class RewriteRules
 		}
 
 		$wp->query_vars['name'] = basename( $resolved );
+	}
+
+	private function resolve_front_page_query( \WP $wp ): void
+	{
+		if ( 'page' === get_option( 'show_on_front' ) ) {
+			$page_on_front = (int) get_option( 'page_on_front' );
+
+			if ( $page_on_front > 0 ) {
+				$wp->query_vars['page_id'] = $page_on_front;
+				unset( $wp->query_vars['pagename'], $wp->query_vars['name'] );
+
+				return;
+			}
+		}
+
+		unset( $wp->query_vars['page_id'], $wp->query_vars['pagename'], $wp->query_vars['name'] );
 	}
 }

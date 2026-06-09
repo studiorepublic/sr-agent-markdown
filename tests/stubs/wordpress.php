@@ -173,6 +173,57 @@ if ( ! function_exists( 'home_url' ) ) {
 	}
 }
 
+if ( ! function_exists( 'apply_filters' ) ) {
+	function apply_filters( string $hook, $value, ...$args ) {
+		return $value;
+	}
+}
+
+if ( ! function_exists( 'get_option' ) ) {
+	function get_option( string $option, $default = false ) {
+		return $GLOBALS['sr_md_test_options'][ $option ] ?? $default;
+	}
+}
+
+if ( ! function_exists( 'update_option' ) ) {
+	function update_option( string $option, $value ): bool {
+		$GLOBALS['sr_md_test_options'][ $option ] = $value;
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'add_rewrite_rule' ) ) {
+	function add_rewrite_rule( string $regex, string $query, string $after = 'bottom' ): void {
+		$GLOBALS['sr_md_test_rewrite_rules'][] = array(
+			'regex' => $regex,
+			'query' => $query,
+			'after' => $after,
+		);
+	}
+}
+
+if ( ! function_exists( 'flush_rewrite_rules' ) ) {
+	function flush_rewrite_rules( bool $hard = true ): void {
+		$GLOBALS['sr_md_test_rewrite_flushed'] = $hard;
+	}
+}
+
+if ( ! function_exists( 'get_page_by_path' ) ) {
+	function get_page_by_path( string $page_path ) {
+		return $GLOBALS['sr_md_test_page_by_path'][ $page_path ] ?? null;
+	}
+}
+
+if ( ! class_exists( 'WP' ) ) {
+	class WP {
+		/**
+		 * @var array<string, mixed>
+		 */
+		public array $query_vars = array();
+	}
+}
+
 if ( ! function_exists( 'has_excerpt' ) ) {
 	function has_excerpt( $post = null ): bool {
 		return ! empty( $GLOBALS['sr_md_test_excerpt'] );
@@ -225,6 +276,13 @@ function sr_md_reset_test_globals(): void {
 	$GLOBALS['sr_md_test_permalink']          = 'https://example.com/about/';
 	$GLOBALS['sr_md_test_excerpt']            = 'A short excerpt.';
 	$GLOBALS['sr_md_test_post']               = new WP_Post();
+	$GLOBALS['sr_md_test_options']            = array(
+		'show_on_front' => 'page',
+		'page_on_front' => 4186,
+	);
+	$GLOBALS['sr_md_test_page_by_path']       = array();
+	$GLOBALS['sr_md_test_rewrite_rules']      = array();
+	$GLOBALS['sr_md_test_rewrite_flushed']    = null;
 	$_SERVER                                    = array();
 	$_GET                                       = array();
 }

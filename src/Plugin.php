@@ -82,8 +82,27 @@ final class Plugin
 		add_action( 'template_redirect', array( $this, 'handle_cache_hit' ), 0 );
 		add_action( 'template_redirect', array( $this, 'maybe_start_buffer' ), 1 );
 		add_action( 'shutdown', array( $this, 'handle_shutdown' ), 0 );
-		add_action( 'send_headers', array( $this, 'handle_send_headers' ) );
+		add_action( 'send_headers', array( $this, 'handle_send_headers' ), 999 );
 		add_action( 'wp_head', array( $this, 'handle_wp_head' ), 1 );
+		add_filter( 'redirect_canonical', array( $this, 'prevent_markdown_canonical_redirect' ), 10, 2 );
+	}
+
+	/**
+	 * @param string|false $redirect_url
+	 * @param string       $requested_url
+	 * @return string|false
+	 */
+	public function prevent_markdown_canonical_redirect( $redirect_url, string $requested_url )
+	{
+		if ( ! $this->is_enabled() || empty( $this->settings['md_urls_enabled'] ) ) {
+			return $redirect_url;
+		}
+
+		if ( ! $this->request_detector->is_markdown_request() || ! $this->request_detector->is_explicit_markdown_route() ) {
+			return $redirect_url;
+		}
+
+		return false;
 	}
 
 	public function handle_parse_request( \WP $wp ): void
@@ -168,7 +187,7 @@ final class Plugin
 			return;
 		}
 
-		if ( ! $this->request_detector->is_eligible_for_alternate() ) {
+		if ( ! $this->request_detector->is_eligible_for_link_header() ) {
 			return;
 		}
 
@@ -189,11 +208,11 @@ final class Plugin
 			return;
 		}
 
-		if ( ! $this->request_detector->is_eligible_for_alternate() ) {
+		if ( ! $this->request_detector->is_eligible_for_link_header() ) {
 			return;
 		}
 
-		$url = $this->headers->get_markdown_url();
+		$url = $this->headers->get_alternate_markdown_url();
 
 		if ( '' === $url ) {
 			return;

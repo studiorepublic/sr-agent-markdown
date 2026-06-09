@@ -88,6 +88,33 @@ final class RequestDetector
 		return $this->is_supported_view();
 	}
 
+	/**
+	 * Whether an HTML response should advertise the Markdown alternate via Link / head tags.
+	 *
+	 * Link discovery headers are still sent for logged-in users when Markdown body output
+	 * is disabled, so agents and audits see alternates on normal HTML responses.
+	 */
+	public function is_eligible_for_link_header(): bool
+	{
+		if ( empty( $this->settings['enabled'] ) ) {
+			return false;
+		}
+
+		if ( empty( $this->settings['link_headers_enabled'] ) && empty( $this->settings['head_alternate_link'] ) ) {
+			return false;
+		}
+
+		if ( $this->is_hard_excluded() ) {
+			return false;
+		}
+
+		if ( ! empty( $this->settings['disable_noindex'] ) && $this->yoast->is_noindex() ) {
+			return false;
+		}
+
+		return $this->is_supported_view();
+	}
+
 	private function is_hard_excluded(): bool
 	{
 		if ( is_admin() ) {

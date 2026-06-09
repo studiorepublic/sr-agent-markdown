@@ -34,6 +34,15 @@ final class RequestDetectorTest extends TestCase
 		$this->assertTrue( $this->invoke_private( $detector, 'matches_md_url' ) );
 	}
 
+	public function test_detects_homepage_md_url(): void
+	{
+		$_SERVER['REQUEST_URI'] = '/.md';
+		$detector               = new RequestDetector( SettingsPage::default_settings(), new YoastCompatibility() );
+
+		$this->assertTrue( $detector->is_markdown_request() );
+		$this->assertTrue( $detector->is_explicit_markdown_route() );
+	}
+
 	public function test_detects_query_params(): void
 	{
 		$_GET['format'] = 'markdown';
@@ -59,6 +68,15 @@ final class RequestDetectorTest extends TestCase
 		$detector                        = new RequestDetector( SettingsPage::default_settings(), new YoastCompatibility() );
 
 		$this->assertFalse( $detector->is_eligible() );
+	}
+
+	public function test_allows_link_header_for_logged_in_users(): void
+	{
+		$GLOBALS['sr_md_test_logged_in'] = true;
+		$detector                        = new RequestDetector( SettingsPage::default_settings(), new YoastCompatibility() );
+
+		$this->assertFalse( $detector->is_eligible() );
+		$this->assertTrue( $detector->is_eligible_for_link_header() );
 	}
 
 	public function test_excludes_noindex_pages_when_enabled(): void

@@ -37,18 +37,55 @@ final class Headers
 			return;
 		}
 
-		if ( empty( $this->settings['link_headers_enabled'] ) ) {
-			header( 'Vary: Accept' );
-			return;
-		}
-
-		$url = $this->get_markdown_url();
-
-		if ( '' !== $url ) {
-			header( 'Link: <' . $url . '>; rel="alternate"; type="text/markdown"', false );
+		if ( ! empty( $this->settings['link_headers_enabled'] ) ) {
+			$this->send_alternate_markdown_link_header();
 		}
 
 		header( 'Vary: Accept' );
+	}
+
+	public function send_alternate_markdown_link_header(): void
+	{
+		if ( headers_sent() ) {
+			return;
+		}
+
+		$link = $this->get_alternate_markdown_link_header();
+
+		if ( '' === $link ) {
+			return;
+		}
+
+		header( $link, false );
+	}
+
+	public function get_alternate_markdown_url(): string
+	{
+		$url = $this->get_markdown_url();
+
+		if ( '' === $url ) {
+			return '';
+		}
+
+		/**
+		 * Filter the Markdown alternate URL used in Link response headers and head tags.
+		 *
+		 * @param string $url Absolute Markdown URL.
+		 */
+		$url = (string) apply_filters( 'sr_agent_markdown_alternate_link_url', $url );
+
+		return $url;
+	}
+
+	public function get_alternate_markdown_link_header(): string
+	{
+		$url = $this->get_alternate_markdown_url();
+
+		if ( '' === $url ) {
+			return '';
+		}
+
+		return 'Link: <' . $url . '>; rel="alternate"; type="text/markdown"';
 	}
 
 	public function get_markdown_url(): string
