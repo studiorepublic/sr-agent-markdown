@@ -109,6 +109,34 @@ final class RewriteRules
 			return;
 		}
 
+		$post_id = url_to_postid( home_url( '/' . $resolved . '/' ) );
+
+		if ( $post_id > 0 ) {
+			$post = get_post( $post_id );
+
+			if ( $post instanceof \WP_Post ) {
+				unset( $wp->query_vars['pagename'], $wp->query_vars['name'], $wp->query_vars['p'] );
+
+				$post_type_object = get_post_type_object( $post->post_type );
+				$query_var        = is_object( $post_type_object ) && is_string( $post_type_object->query_var ) && '' !== $post_type_object->query_var
+					? $post_type_object->query_var
+					: $post->post_type;
+
+				if ( 'page' === $post->post_type ) {
+					$wp->query_vars['pagename'] = $resolved;
+				} else {
+					$wp->query_vars['post_type'] = $post->post_type;
+					$wp->query_vars['name']      = $post->post_name;
+
+					if ( 'post' !== $post->post_type && $query_var !== 'post_type' ) {
+						$wp->query_vars[ $query_var ] = $post->post_name;
+					}
+				}
+
+				return;
+			}
+		}
+
 		$wp->query_vars['name'] = basename( $resolved );
 	}
 

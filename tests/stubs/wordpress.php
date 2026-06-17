@@ -120,8 +120,12 @@ if ( ! function_exists( 'post_password_required' ) ) {
 }
 
 if ( ! function_exists( 'get_post' ) ) {
-	function get_post(): ?object {
-		return $GLOBALS['sr_md_test_post'] ?? null;
+	function get_post( $post = null ): ?object {
+		if ( null === $post ) {
+			return $GLOBALS['sr_md_test_post'] ?? null;
+		}
+
+		return $GLOBALS['sr_md_test_posts'][ (int) $post ] ?? null;
 	}
 }
 
@@ -250,9 +254,29 @@ if ( ! function_exists( 'user_trailingslashit' ) ) {
 
 if ( ! class_exists( 'WP_Post' ) ) {
 	class WP_Post {
+		public int $ID = 0;
 		public string $post_type = 'page';
 		public string $post_status = 'publish';
 		public string $post_content = 'Sample content.';
+		public string $post_name = '';
+	}
+}
+
+if ( ! function_exists( 'home_url' ) ) {
+	function home_url( string $path = '' ): string {
+		return 'https://example.com' . $path;
+	}
+}
+
+if ( ! function_exists( 'url_to_postid' ) ) {
+	function url_to_postid( string $url ): int {
+		return (int) ( $GLOBALS['sr_md_test_url_to_postid'][ $url ] ?? 0 );
+	}
+}
+
+if ( ! function_exists( 'get_post_type_object' ) ) {
+	function get_post_type_object( string $post_type ) {
+		return $GLOBALS['sr_md_test_post_type_objects'][ $post_type ] ?? null;
 	}
 }
 
@@ -283,6 +307,9 @@ function sr_md_reset_test_globals(): void {
 	$GLOBALS['sr_md_test_page_by_path']       = array();
 	$GLOBALS['sr_md_test_rewrite_rules']      = array();
 	$GLOBALS['sr_md_test_rewrite_flushed']    = null;
+	$GLOBALS['sr_md_test_url_to_postid']      = array();
+	$GLOBALS['sr_md_test_posts']              = array();
+	$GLOBALS['sr_md_test_post_type_objects']  = array();
 	$_SERVER                                    = array();
 	$_GET                                       = array();
 }

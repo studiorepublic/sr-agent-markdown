@@ -66,4 +66,30 @@ final class RewriteRulesTest extends TestCase
 
 		$this->assertSame( 'about', $wp->query_vars['pagename'] );
 	}
+
+	public function test_normalizes_custom_post_type_md_request(): void
+	{
+		$post = new WP_Post();
+		$post->ID        = 242;
+		$post->post_type = 'case_studies';
+		$post->post_name = 'ellen-macarthur-cancer-trust';
+
+		$GLOBALS['sr_md_test_url_to_postid']['https://example.com/work/ellen-macarthur-cancer-trust/'] = 242;
+		$GLOBALS['sr_md_test_posts'][242]                                                            = $post;
+		$GLOBALS['sr_md_test_post_type_objects']['case_studies']                                     = (object) array(
+			'query_var' => 'case_studies',
+		);
+
+		$wp             = new WP();
+		$wp->query_vars = array(
+			RewriteRules::QUERY_VAR => 'work/ellen-macarthur-cancer-trust',
+		);
+		$rules          = new RewriteRules( SettingsPage::default_settings() );
+
+		$rules->normalize_md_request( $wp );
+
+		$this->assertSame( 'case_studies', $wp->query_vars['post_type'] );
+		$this->assertSame( 'ellen-macarthur-cancer-trust', $wp->query_vars['name'] );
+		$this->assertSame( 'ellen-macarthur-cancer-trust', $wp->query_vars['case_studies'] );
+	}
 }
